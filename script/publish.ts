@@ -43,6 +43,10 @@ console.log("Building project...");
 await $`bun run build`;
 console.log("Build completed");
 
+// Authenticate with npm
+console.log("Authenticating with npm...");
+await $`npm config set //registry.npmjs.org/:_authToken ${process.env.NPM_TOKEN}`;
+
 // Publish to npm
 console.log("Publishing to npm...");
 await $`npm publish --access public`;
@@ -62,13 +66,14 @@ console.log("Generating release notes...");
 // Get latest tag for comparison
 let latestTag = "HEAD~1";
 try {
-  const result = await $`git describe --tags --abbrev=0 HEAD~1`.text();
-  latestTag = result.trim();
+  const result = await $`git describe --tags --abbrev=0 HEAD~1`;
+  const text = await result.text();
+  latestTag = text.trim();
 } catch (_e) {
   // No previous tags, use first commit
-  latestTag = await $`git rev-list --max-parents=0 HEAD`
-    .text()
-    .then((t) => t.trim());
+  const result = await $`git rev-list --max-parents=0 HEAD`;
+  const text = await result.text();
+  latestTag = text.trim();
 }
 
 console.log(`Comparing ${latestTag}..HEAD`);
@@ -78,10 +83,8 @@ let commits: string[] = [];
 try {
   const result =
     await $`git log --oneline --pretty=format:"%h %s" ${latestTag}..HEAD`;
-  commits = result
-    .text()
-    .split("\n")
-    .filter((line) => line.trim());
+  const text = await result.text();
+  commits = text.split("\n").filter((line) => line.trim());
 } catch (_e) {
   // No commits or error
 }
@@ -93,7 +96,8 @@ const contributors = new Set<string>();
 for (const commit of commits) {
   try {
     const hash = commit.split(" ")[0];
-    const author = await $`git show -s --format='%an' ${hash}`.text().trim();
+    const result = await $`git show -s --format='%an' ${hash}`;
+    const author = (await result.text()).trim();
     if (author !== "Donald Silveira") {
       contributors.add(`@${author.replace(/\s+/g, "").toLowerCase()}`);
     }
