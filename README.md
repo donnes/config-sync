@@ -9,13 +9,13 @@ The era of AI-powered coding is here, but managing multiple AI assistants is a m
 
 ## Why syncode?
 
-**The Problem:** You use Cursor at work, Claude Code for side projects, and want to try Windsurf. Each has its own config format and setup. Keeping them in sync is manual hell.
+**The Problem:** You use Cursor at work, Claude Code for side projects, and want to try Windsurf or Roo Code. Each has its own config format and setup. Keeping 17+ AI agents in sync is manual hell.
 
 **The Solution:** `syncode` is your single source of truth for AI agent configurations.
 
 ## Features
 
-- 🤖 **Multi-Agent Support** - Manage Claude Code, Cursor, Windsurf, OpenCode, VSCode from one CLI
+- 🤖 **17+ AI Agents** - Claude Code, Cursor, Windsurf, OpenCode, VSCode, GitHub Copilot, Roo Code, Goose, Gemini CLI, Amp, Kilo Code, Kiro CLI, Trae, Codex, Antigravity, Clawdbot, Droid
 - 🔄 **Smart Sync** - Automatic detection and sync with smart defaults per agent
 - 🔗 **Symlinks & Copy** - Symlinks for live sync, copy for Claude (preserves cache)
 - 📦 **Version Control** - Git-based workflow for your AI configurations
@@ -52,11 +52,11 @@ syncode new
 ```
 
 This will:
-- Auto-detect installed AI agents (Claude Code, Cursor, Windsurf, etc.)
+- Auto-detect installed AI agents (17+ agents supported)
 - Let you select which agents to sync
 - Create a git repository for your configs
 - Import your existing configs
-- Set up smart sync defaults (symlinks for most, copy for Claude)
+- Set up smart sync defaults (symlinks for most, copy for Claude, Gemini, etc.)
 
 ### Sync Agent Configs
 
@@ -94,11 +94,23 @@ Push your config changes to the remote repository:
 
 | Agent | Config Path | Sync Method | Auto-Detect |
 |-------|-------------|-------------|-------------|
-| **OpenCode** | `~/.config/opencode` | Symlink | ✅ Yes |
+| **Amp** | `~/.config/amp` | Symlink | ✅ Yes |
+| **Antigravity** | `~/.gemini/antigravity` | Copy | ✅ Yes |
 | **Claude Code** | `~/.claude` | Copy | ✅ Yes |
+| **Clawdbot** | `~/.clawdbot` | Symlink | ✅ Yes |
+| **Codex** | `~/.codex` | Symlink | ✅ Yes |
 | **Cursor** | `~/Library/Application Support/Cursor/User` | Symlink | ✅ Yes |
-| **Windsurf** | `~/.codeium/windsurf` | Symlink | ✅ Yes |
+| **Droid** | `~/.factory` | Symlink | ✅ Yes |
+| **Gemini CLI** | `~/.gemini` | Copy | ✅ Yes |
+| **GitHub Copilot** | `~/.copilot` | Copy | ✅ Yes |
+| **Goose** | `~/.config/goose` | Symlink | ✅ Yes |
+| **Kilo Code** | `~/.kilocode` | Symlink | ✅ Yes |
+| **Kiro CLI** | `~/.kiro` | Symlink | ✅ Yes |
+| **OpenCode** | `~/.config/opencode` | Symlink | ✅ Yes |
+| **Roo Code** | `~/.roo` | Symlink | ✅ Yes |
+| **Trae** | `~/.trae` | Symlink | ✅ Yes |
 | **VSCode** | `~/Library/Application Support/Code/User` | Symlink | ✅ Yes |
+| **Windsurf** | `~/.codeium/windsurf` | Symlink | ✅ Yes |
 
 ## Configuration
 
@@ -126,24 +138,23 @@ Global configuration is stored at `~/.syncode/config.json`:
 ├── .gitignore
 ├── README.md
 └── configs/
-    ├── claude/          # Copy sync (preserves cache)
-    │   ├── settings.json
-    │   ├── CLAUDE.md
-    │   ├── commands/
-    │   └── skills/
-    ├── cursor/          # Symlinked
-    │   ├── settings.json
-    │   └── .cursorrules
-    ├── windsurf/        # Symlinked
-    │   └── settings.json
-    ├── opencode/        # Symlinked
-    │   ├── opencode.json
-    │   ├── command/
-    │   ├── agent/
-    │   └── skill/
-    └── vscode/          # Symlinked
-        ├── settings.json
-        └── keybindings.json
+    ├── amp/               # Symlinked
+    ├── antigravity/       # Copy sync
+    ├── claude/            # Copy sync (preserves cache)
+    ├── clawdbot/          # Symlinked
+    ├── codex/             # Symlinked
+    ├── cursor/            # Symlinked
+    ├── droid/             # Symlinked
+    ├── gemini-cli/        # Copy sync
+    ├── github-copilot/    # Copy sync
+    ├── goose/             # Symlinked
+    ├── kilo/              # Symlinked
+    ├── kiro-cli/          # Symlinked
+    ├── opencode/          # Symlinked
+    ├── roo/               # Symlinked
+    ├── trae/              # Symlinked
+    ├── vscode/            # Symlinked
+    └── windsurf/          # Symlinked
 ```
 
 ## Usage Examples
