@@ -1,0 +1,107 @@
+/**
+ * Roo Code adapter
+ */
+
+import { join } from "path";
+import type {
+  AgentAdapter,
+  Platform,
+  ImportResult,
+  ExportResult,
+} from "./types";
+import {
+  exists,
+  copyDir,
+  ensureDir,
+  createSymlink,
+  isSymlink,
+  removeDir,
+} from "../utils/fs";
+import { unlinkSync } from "fs";
+import { contractHome } from "../utils/paths";
+
+export class RooAdapter implements AgentAdapter {
+  readonly id = "roo";
+  readonly name = "Roo Code";
+  readonly version = "1.0.0";
+  readonly syncStrategy = {
+    import: "copy" as const,
+    export: "symlink" as const,
+  };
+
+  getConfigPath(platform: Platform): string {
+    return join(process.env.HOME || "", ".roo");
+  }
+
+  getRepoPath(repoRoot: string): string {
+    return join(repoRoot, "configs", "roo");
+  }
+
+  isInstalled(platform: Platform): boolean {
+    return exists(this.getConfigPath(platform));
+  }
+
+  detect(): boolean {
+    const platform = process.platform === "darwin" ? "macos" : process.platform === "win32" ? "windows" : "linux";
+    return this.isInstalled(platform);
+  }
+
+  isLinked(systemPath: string, repoPath: string): boolean {
+    return exists(systemPath) && exists(repoPath) && isSymlink(systemPath);
+  }
+
+  async import(systemPath: string, repoPath: string): Promise<ImportResult> {
+    if (!exists(systemPath)) {
+      return {
+        success: false,
+        message: "Roo Code config not found on system",
+      };
+    }
+
+    ensureDir(repoPath);
+    copyDir(systemPath, repoPath);
+
+    return {
+      success: true,
+      message: "Imported Roo Code configs to repo",
+    };
+  }
+
+  async export(repoPath: string, systemPath: string): Promise<ExportResult> {
+    if (!exists(repoPath)) {
+      return {
+        success: false,
+        message: "Roo Code configs not found in repo",
+      };
+    }
+
+    // Remove existing (symlink or directory)
+    if (exists(systemPath)) {
+      if (isSymlink(systemPath)) {
+        unlinkSync(systemPath);
+      } else {
+        // Backup existing config
+        const backupPath = `${systemPath}.backup`;
+        if (exists(backupPath)) {
+          if (isSymlink(backupPath)) {
+            unlinkSync(backupPath);
+          } else {
+            removeDir(backupPath);
+          };
+        }
+        require("fs").renameSync(systemPath, backupPath);
+      }
+    }
+
+    // Create symlink
+    createSymlink(repoPath, systemPath);
+
+    return {
+      success: true,
+      message: `Linked Roo Code configs to ${contractHome(systemPath)}`,
+      linkedTo: repoPath,
+    };
+  }
+}
+
+export const rooAdapter = new RooAdapter();
