@@ -40,6 +40,12 @@
   - Export (Repo -> System): Applies repository configurations to the system.
 - Safety: Automatically creates backups of existing system configurations.
 
+### `syncode unsync`
+- Purpose: Removes symlink-based configs and copies them back to the local machine.
+- Actions:
+  - Replaces symlinked agent configs with real files in system paths.
+  - Skips agents that use copy-based syncing.
+
 ### `syncode status`
 - Purpose: Displays the current synchronization state.
 - Output:

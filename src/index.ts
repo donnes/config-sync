@@ -8,6 +8,7 @@ import { newCommand } from "./commands/new";
 import { pushCommand } from "./commands/push";
 import { statusCommand } from "./commands/status";
 import { syncCommand } from "./commands/sync";
+import { unsyncCommand } from "./commands/unsync";
 
 // Read version from package.json
 const __filename = fileURLToPath(import.meta.url);
@@ -20,6 +21,7 @@ const VERSION = packageJson.version;
 const commands = {
   new: newCommand,
   sync: syncCommand,
+  unsync: unsyncCommand,
   status: statusCommand,
   push: pushCommand,
 };
@@ -70,6 +72,11 @@ async function main() {
         hint: "Import or export agent configs",
       },
       {
+        value: "unsync",
+        label: "Remove symlinks",
+        hint: "Copy configs back to this machine",
+      },
+      {
         value: "status",
         label: "Check status",
         hint: "Show synced agents",
@@ -107,6 +114,7 @@ Setup Commands:
 
 Sync Commands:
   sync          Sync agent configs (import or export)
+  unsync        Remove symlinks and keep local configs
   status        Show status of synced agents
   push          Push config changes to git remote
 
@@ -119,6 +127,7 @@ Examples:
   syncode new          # Initialize new agent config repo
   syncode status       # Show status
   syncode sync         # Sync agent configs
+  syncode unsync       # Remove symlinks
   syncode push         # Push changes to remote
 
 Quick Start:
