@@ -13,6 +13,8 @@ The era of AI-powered coding is here, but managing multiple AI assistants is a m
 
 **The Solution:** `syncode` is your single source of truth for AI agent configurations.
 
+<img width="770" height="628" alt="image" src="https://github.com/user-attachments/assets/6dc2851c-3b0c-4fba-9d34-5728d055c6a3" />
+
 ## Features
 
 - 🤖 **17+ AI Agents** - Claude Code, Cursor, Windsurf, OpenCode, VSCode, GitHub Copilot, Roo Code, Goose, Gemini CLI, Amp, Kilo Code, Kiro CLI, Trae, Codex, Antigravity, Clawdbot, Droid
