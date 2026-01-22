@@ -3,17 +3,18 @@
  */
 
 import * as p from "@clack/prompts";
-import { getAgentMetadata } from "../agents/metadata";
+import type { Platform } from "../adapters/types";
+import { detectInstalledAgents, getAgentMetadata } from "../agents/metadata";
 import { getConfig, setConfig } from "./manager";
 import type { GlobalConfig } from "./types";
-import { SUPPORTED_AGENTS } from "./types";
 
 export async function checkAndMigrateConfig(
   silent: boolean = false,
 ): Promise<void> {
   try {
     const config = getConfig();
-    const missing = findMissingConfigs(config);
+    const platform = getPlatform();
+    const missing = findMissingConfigs(config, platform);
 
     if (missing.length === 0) {
       return;
@@ -46,22 +47,18 @@ export async function checkAndMigrateConfig(
   }
 }
 
-function findMissingConfigs(config: GlobalConfig): string[] {
-  const missing: string[] = [];
-
-  for (const id of SUPPORTED_AGENTS) {
-    if (!config.agents.includes(id)) {
-      missing.push(id);
-    }
-  }
-
-  return missing;
+function findMissingConfigs(
+  config: GlobalConfig,
+  platform: Platform,
+): string[] {
+  const installedAgents = detectInstalledAgents(platform);
+  return installedAgents.filter((id) => !config.agents.includes(id));
 }
 
 export function hasNewConfigsAvailable(): boolean {
   try {
     const config = getConfig();
-    const missing = findMissingConfigs(config);
+    const missing = findMissingConfigs(config, getPlatform());
     return missing.length > 0;
   } catch {
     return false;
@@ -71,8 +68,18 @@ export function hasNewConfigsAvailable(): boolean {
 export function getNewConfigsAvailable(): string[] {
   try {
     const config = getConfig();
-    return findMissingConfigs(config);
+    return findMissingConfigs(config, getPlatform());
   } catch {
     return [];
   }
+}
+
+function getPlatform(): Platform {
+  if (process.platform === "darwin") {
+    return "macos";
+  }
+  if (process.platform === "win32") {
+    return "windows";
+  }
+  return "linux";
 }
