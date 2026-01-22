@@ -6,12 +6,14 @@ import * as p from "@clack/prompts";
 import { adapterRegistry } from "../adapters/registry";
 import type { Platform } from "../adapters/types";
 import { getConfig } from "../config/manager";
+import { checkAndMigrateConfig } from "../config/migrations";
 import type { GlobalConfig } from "../config/types";
 
 export async function syncCommand() {
   p.intro("Sync Agent Configs");
 
-  // Get configuration
+  await checkAndMigrateConfig();
+
   let config: GlobalConfig;
   try {
     config = getConfig();
@@ -51,18 +53,45 @@ export async function syncCommand() {
     return;
   }
 
-  // Perform sync
-  const s = p.spinner();
-  s.start(
-    `${direction === "import" ? "Importing" : "Exporting"} agent configs`,
-  );
-
   const platform: Platform =
     process.platform === "darwin"
       ? "macos"
       : process.platform === "win32"
         ? "windows"
         : "linux";
+
+  const agentOptions = config.agents.map((agentId) => {
+    const adapter = adapterRegistry.get(agentId);
+    const label = adapter?.name || agentId;
+    return {
+      value: agentId,
+      label,
+      hint: adapter ? undefined : "No adapter found",
+    };
+  });
+
+  const selectedAgents = await p.multiselect({
+    message: `Select agents to ${direction === "import" ? "import" : "export"}`,
+    options: agentOptions,
+    initialValues: config.agents,
+    required: false,
+  });
+
+  if (p.isCancel(selectedAgents)) {
+    p.cancel("Cancelled");
+    return;
+  }
+
+  if ((selectedAgents as string[]).length === 0) {
+    p.cancel("No agents selected");
+    return;
+  }
+
+  const s = p.spinner();
+  s.start(
+    `${direction === "import" ? "Importing" : "Exporting"} ${(selectedAgents as string[]).length} agent(s)`,
+  );
+
   const repoPath = config.repoPath.startsWith("~")
     ? config.repoPath.replace("~", process.env.HOME || "")
     : config.repoPath;
@@ -70,7 +99,7 @@ export async function syncCommand() {
   let successCount = 0;
   let failCount = 0;
 
-  for (const agentId of config.agents) {
+  for (const agentId of selectedAgents as string[]) {
     const adapter = adapterRegistry.get(agentId);
     if (!adapter) {
       s.message(`Warning: Adapter not found for ${agentId}`);

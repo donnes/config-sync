@@ -85,6 +85,14 @@ export const agentMetadata: Record<string, AgentMetadata> = {
     hasAdapter: true,
   },
 
+  dotfiles: {
+    id: "dotfiles",
+    displayName: "Dotfiles",
+    configDir: home,
+    detectInstalled: () => true,
+    hasAdapter: true,
+  },
+
   droid: {
     id: "droid",
     displayName: "Droid",

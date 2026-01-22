@@ -3,6 +3,7 @@ import { adapterRegistry } from "../adapters/registry";
 import type { Platform } from "../adapters/types";
 import { getAgentMetadata, isAgentInstalled } from "../agents";
 import { getConfig } from "../config/manager";
+import { getNewConfigsAvailable } from "../config/migrations";
 import type { GlobalConfig } from "../config/types";
 import { exists } from "../utils/fs";
 import { getGitStatus, hasChanges } from "../utils/git";
@@ -120,6 +121,16 @@ export async function statusCommand() {
     }
   } else {
     p.log.success("Git: Clean");
+  }
+
+  const newConfigs = getNewConfigsAvailable();
+  if (newConfigs.length > 0) {
+    const names = newConfigs
+      .map((id) => getAgentMetadata(id)?.displayName || id)
+      .join(", ");
+    console.log("");
+    p.log.info(`💡 New config available: ${names}`);
+    p.log.info(`   Run 'syncode sync' to add it to your config`);
   }
 
   const runMachineStatus = await p.confirm({

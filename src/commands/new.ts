@@ -182,16 +182,6 @@ export async function newCommand() {
     }
   }
 
-  const includeDotfiles = await p.confirm({
-    message: "Include dotfiles management? (zsh, bash, ghostty, tmux)",
-    initialValue: false,
-  });
-
-  if (p.isCancel(includeDotfiles)) {
-    p.cancel("Initialization cancelled.");
-    return;
-  }
-
   const s = p.spinner();
   s.start("Setting up repository structure and importing configs");
 
@@ -248,10 +238,6 @@ export async function newCommand() {
       }
     }
 
-    if (includeDotfiles) {
-      mkdirSync(join(configsDir, "dotfiles"), { recursive: true });
-    }
-
     const gitignoreContent = `# macOS
 .DS_Store
 
@@ -299,7 +285,7 @@ ${selectedAgents
   })
   .join("\n")}
 
-${includeDotfiles ? "\n## Dotfiles\n\n- Shell configs (.zshrc, .bashrc)\n- Terminal configs (ghostty, tmux)" : ""}
+${selectedAgents.includes("dotfiles") ? "\n## Dotfiles\n\n- Shell configs (.zshrc, .bashrc)\n- Terminal configs (ghostty, tmux)" : ""}
 
 ## Usage
 
@@ -355,7 +341,7 @@ syncode push
 Repository: ${contractHome(repoPath)}
 Configuration: ~/.syncode/config.json
 Agents: ${agentList}
-${includeDotfiles ? "Dotfiles: ✓ Enabled" : ""}
+${selectedAgents.includes("dotfiles") ? "Dotfiles: ✓ Enabled" : ""}
 
 Next steps:
   • Edit configs in ${contractHome(repoPath)}/configs/

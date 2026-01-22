@@ -4,6 +4,7 @@ import { claudeAdapter } from "./claude";
 import { clawdbotAdapter } from "./clawdbot";
 import { codexAdapter } from "./codex";
 import { cursorAdapter } from "./cursor";
+import { dotfilesAdapter } from "./dotfiles";
 import { droidAdapter } from "./droid";
 import { geminiCliAdapter } from "./gemini-cli";
 import { githubCopilotAdapter } from "./github-copilot";
@@ -81,6 +82,7 @@ export function registerBuiltinAdapters(): void {
   adapterRegistry.register(clawdbotAdapter);
   adapterRegistry.register(codexAdapter);
   adapterRegistry.register(cursorAdapter);
+  adapterRegistry.register(dotfilesAdapter);
   adapterRegistry.register(droidAdapter);
   adapterRegistry.register(geminiCliAdapter);
   adapterRegistry.register(githubCopilotAdapter);

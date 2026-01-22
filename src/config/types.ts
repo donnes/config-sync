@@ -7,13 +7,13 @@ export interface GlobalConfig {
   /** Config schema version for migrations */
   version: string;
 
-  /** Path to dotfiles repository */
+  /** Path to configs repository */
   repoPath: string;
 
   /** Git remote URL (optional) */
   remote?: string;
 
-  /** Enabled agents */
+  /** Enabled sync targets (agents and dotfiles) */
   agents: string[];
 
   /** Feature flags and preferences */
@@ -45,12 +45,9 @@ export interface ConfigValidationResult {
   errors: ConfigValidationError[];
 }
 
-/**
- * Default configuration values
- */
 export const DEFAULT_CONFIG: GlobalConfig = {
   version: "1.0.0",
-  repoPath: "~/agent-configs",
+  repoPath: "~/.syncode/repo",
   agents: [],
   features: {
     autoSync: false,
@@ -59,9 +56,6 @@ export const DEFAULT_CONFIG: GlobalConfig = {
   },
 };
 
-/**
- * Available agent IDs
- */
 export const SUPPORTED_AGENTS = [
   "amp",
   "antigravity",
@@ -69,6 +63,7 @@ export const SUPPORTED_AGENTS = [
   "clawdbot",
   "codex",
   "cursor",
+  "dotfiles",
   "droid",
   "gemini-cli",
   "github-copilot",
