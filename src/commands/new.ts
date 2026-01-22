@@ -311,9 +311,7 @@ syncode status
 syncode sync
 
 # Push to remote
-git add .
-git commit -m "Update configs"
-git push
+syncode push
 \`\`\`
 `;
     writeFileSync(join(repoPath, "README.md"), readmeContent);
@@ -363,7 +361,7 @@ Next steps:
   • Edit configs in ${contractHome(repoPath)}/configs/
   • Changes are synced automatically via symlinks
   • Run 'syncode sync' to apply changes to your system
-  ${remote ? `• Push to GitHub: cd ${contractHome(repoPath)} && git push -u origin main` : ""}`,
+  • Run 'syncode push' to commit and push changes`,
     );
   } catch (error) {
     p.cancel(`Failed to create configuration: ${error}`);
