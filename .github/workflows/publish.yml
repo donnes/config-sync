@@ -14,23 +14,14 @@ on:
           - major
 
 jobs:
-  setup:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - uses: ./.github/actions/setup
-
   publish:
-    needs: setup
     runs-on: ubuntu-latest
     permissions:
       contents: write
       id-token: write
+    outputs:
+      version: ${{ steps.publish.outputs.version }}
+      tag: ${{ steps.publish.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -38,45 +29,41 @@ jobs:
 
       - uses: ./.github/actions/setup
 
-      - name: Publish
+      - name: Publish to NPM
         id: publish
-        run: bun run script/publish.ts
+        run: bun run scripts/publish.ts
         env:
           BUMP: ${{ inputs.bump }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Commit version bump
+        id: commit
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "release: v${{ steps.publish.outputs.version }}"
+          file_pattern: "package.json"
+
+      - name: Save Commit Hash
+        id: save_hash
+        run: echo "hash=${{ steps.commit.outputs.commit_hash || github.sha }}" >> $GITHUB_OUTPUT
 
     outputs:
       version: ${{ steps.publish.outputs.version }}
       tag: ${{ steps.publish.outputs.tag }}
+      commit_hash: ${{ steps.save_hash.outputs.hash }}
 
-  commit:
+  release:
     needs: publish
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-      - name: Commit release version
-        id: commit
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "release: v${{ needs.publish.outputs.version }}"
-          file_pattern: "package.json"
-          token: ${{ secrets.GH_PAT }}
+      - uses: actions/checkout@v4
 
-    outputs:
-      commit_hash: ${{ steps.commit.outputs.commit_hash }}
-
-  release:
-    needs: [publish, commit]
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: "v${{ needs.publish.outputs.tag }}"
-          name: "v${{ needs.publish.outputs.version }}"
+          tag_name: ${{ needs.publish.outputs.tag }}
+          name: ${{ needs.publish.outputs.tag }}
           generate_release_notes: true
-          target_commitish: ${{ needs.commit.outputs.commit_hash }}
+          target_commitish: ${{ needs.publish.outputs.commit_hash }}
