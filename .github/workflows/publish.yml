@@ -62,6 +62,7 @@ jobs:
         with:
           commit_message: "release: v${{ needs.publish.outputs.version }}"
           file_pattern: "package.json"
+          token: ${{ secrets.GH_PAT }}
 
     outputs:
       commit_hash: ${{ steps.commit.outputs.commit_hash }}
