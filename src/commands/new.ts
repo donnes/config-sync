@@ -65,7 +65,11 @@ export async function newCommand() {
     try {
       mkdirSync(repoPath, { recursive: true });
     } catch (error) {
-      p.cancel(`Failed to create directory: ${error}`);
+      const { logError, getErrorLogFile } = require("../utils/trace");
+      const logFile = logError(error);
+      p.cancel(
+        `Failed to create directory: ${error}\n${getErrorLogFile(logFile)}`,
+      );
       return;
     }
   }
@@ -316,7 +320,9 @@ syncode push
     s.stop("Repository structure created");
   } catch (error) {
     s.stop("Failed to create repository structure");
-    p.cancel(`Error: ${error}`);
+    const { logError, getErrorLogFile } = require("../utils/trace");
+    const logFile = logError(error);
+    p.cancel(`Error: ${error}\n${getErrorLogFile(logFile)}`);
     return;
   }
 
@@ -352,6 +358,10 @@ Next steps:
   • Run 'syncode push' to commit and push changes`,
     );
   } catch (error) {
-    p.cancel(`Failed to create configuration: ${error}`);
+    const { logError, getErrorLogFile } = require("../utils/trace");
+    const logFile = logError(error);
+    p.cancel(
+      `Failed to create configuration: ${error}\n${getErrorLogFile(logFile)}`,
+    );
   }
 }

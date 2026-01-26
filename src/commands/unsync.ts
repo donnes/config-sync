@@ -132,6 +132,10 @@ export async function unsyncCommand() {
         failCount++;
       }
     } catch (error) {
+      const errorObj =
+        error instanceof Error ? error : new Error(String(error));
+      const { logError } = require("../utils/trace");
+      logError(errorObj, "unsync");
       s.message(`✗ Error unsyncing ${adapter.name}: ${error}`);
       failCount++;
     }

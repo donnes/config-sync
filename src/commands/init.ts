@@ -80,7 +80,11 @@ export async function initCommand() {
     try {
       mkdirSync(dirname(repoPath), { recursive: true });
     } catch (error) {
-      p.cancel(`Failed to create directory: ${error}`);
+      const { logError, getErrorLogFile } = require("../utils/trace");
+      const logFile = logError(error);
+      p.cancel(
+        `Failed to create directory: ${error}\n${getErrorLogFile(logFile)}`,
+      );
       return;
     }
 
@@ -204,6 +208,10 @@ Next steps:
   • Configs in ${contractHome(repoPath)}/configs will apply to this machine`,
     );
   } catch (error) {
-    p.cancel(`Failed to create configuration: ${error}`);
+    const { logError, getErrorLogFile } = require("../utils/trace");
+    const logFile = logError(error);
+    p.cancel(
+      `Failed to create configuration: ${error}\n${getErrorLogFile(logFile)}`,
+    );
   }
 }

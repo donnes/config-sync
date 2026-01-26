@@ -160,6 +160,10 @@ export async function syncCommand() {
       }
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
+      const errorObj =
+        error instanceof Error ? error : new Error(String(error));
+      const { logError } = require("../utils/trace");
+      logError(errorObj, "sync");
       s.message(`✗ ${adapter.name}: ${errorMsg}`);
       errors.push({ agent: adapter.name, error: errorMsg });
       failCount++;
