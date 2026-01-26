@@ -222,6 +222,59 @@ test("removeDir deletes nested directory", () => {
   }
 });
 
+test("copyDir skips .git directories", () => {
+  const dir = makeTempDir("fs-skipgit");
+  try {
+    const src = join(dir, "src");
+    const dest = join(dir, "dest");
+    ensureDir(join(src, ".git", "objects"));
+    ensureDir(join(src, "skill"));
+    writeFileSync(join(src, ".git", "config"), "git config");
+    writeFileSync(join(src, ".git", "objects", "pack.idx"), "pack data");
+    writeFileSync(join(src, "skill", "test.md"), "skill content");
+    writeFileSync(join(src, "config.json"), "app config");
+
+    copyDir(src, dest);
+
+    // .git should NOT be copied
+    assert.equal(exists(join(dest, ".git")), false);
+    // Regular files should be copied
+    assert.equal(
+      readFileSync(join(dest, "config.json"), "utf-8"),
+      "app config",
+    );
+    assert.equal(
+      readFileSync(join(dest, "skill", "test.md"), "utf-8"),
+      "skill content",
+    );
+  } finally {
+    cleanupTempDir(dir);
+  }
+});
+
+test("copyDir skips node_modules", () => {
+  const dir = makeTempDir("fs-skipnodemod");
+  try {
+    const src = join(dir, "src");
+    const dest = join(dir, "dest");
+    ensureDir(join(src, "node_modules", "some-package"));
+    writeFileSync(
+      join(src, "node_modules", "some-package", "index.js"),
+      "module",
+    );
+    writeFileSync(join(src, "index.ts"), "source");
+
+    copyDir(src, dest);
+
+    // node_modules should NOT be copied
+    assert.equal(exists(join(dest, "node_modules")), false);
+    // Regular files should be copied
+    assert.equal(readFileSync(join(dest, "index.ts"), "utf-8"), "source");
+  } finally {
+    cleanupTempDir(dir);
+  }
+});
+
 async function run() {
   for (const { name, run } of tests) {
     try {
