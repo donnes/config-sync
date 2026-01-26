@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 
-import { $ } from "bun";
 import { writeFile } from "node:fs/promises";
+import { $ } from "bun";
 
 // 1. Validation
 const bump = process.env.BUMP;
@@ -38,7 +38,7 @@ console.log(`Bumping ${currentVersion} -> ${newVersion}`);
 
 // 3. Update Files
 pkg.version = newVersion;
-await writeFile("package.json", JSON.stringify(pkg, null, 2) + "\n");
+await writeFile("package.json", `${JSON.stringify(pkg, null, 2)}\n`);
 
 // 4. Build
 console.log("Running build...");
@@ -50,7 +50,7 @@ try {
   // We pass the token directly to the publish command
   await $`npm publish --access public --//registry.npmjs.org/:_authToken=${process.env.NPM_TOKEN}`;
   console.log("NPM publish successful.");
-} catch (error) {
+} catch (_error) {
   console.error("NPM publish failed.");
   process.exit(1);
 }

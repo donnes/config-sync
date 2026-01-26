@@ -82,7 +82,7 @@ async function main(): Promise<void> {
   try {
     testFiles = await findTestFiles(opts.testsDir);
   } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
+    const _msg = err instanceof Error ? err.message : String(err);
     process.exit(1);
   }
 
