@@ -96,6 +96,12 @@ export class DotfilesAdapter implements AgentAdapter {
         isDir: true,
         optional: true,
       },
+      {
+        repoPath: ".config/yazi",
+        systemPath: join(HOME, ".config", "yazi"),
+        isDir: true,
+        optional: true,
+      },
     ];
   }
 
