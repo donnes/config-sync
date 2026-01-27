@@ -51,7 +51,8 @@ export const agentMetadata: Record<string, AgentMetadata> = {
     id: "clawdbot",
     displayName: "Clawdbot",
     configDir: join(home, ".clawdbot"),
-    detectInstalled: () => existsSync(join(home, ".clawdbot")),
+    detectInstalled: () =>
+      existsSync(join(home, ".clawd")) || existsSync(join(home, ".clawdbot")),
     hasAdapter: true,
   },
 

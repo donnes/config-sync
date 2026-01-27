@@ -41,6 +41,9 @@ export interface AgentAdapter {
   /** Sync strategy for this adapter */
   readonly syncStrategy: SyncOptions;
 
+  /** Alternative config paths (optional) */
+  configPaths?: string[] | ((platform: Platform) => string[]);
+
   /**
    * Get the system config path for this adapter
    * @param platform Target platform

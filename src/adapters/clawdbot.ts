@@ -2,7 +2,7 @@
  * Clawdbot adapter
  */
 
-import { unlinkSync } from "node:fs";
+import { existsSync } from "node:fs";
 import { join } from "node:path";
 import {
   copyDir,
@@ -29,16 +29,26 @@ export class ClawdbotAdapter implements AgentAdapter {
     export: "symlink" as const,
   };
 
+  configPaths = [
+    join(process.env.HOME || "", ".clawd"),
+    join(process.env.HOME || "", ".clawdbot"),
+  ];
+
   getConfigPath(_platform: Platform): string {
-    return join(process.env.HOME || "", ".clawdbot");
+    for (const path of this.configPaths) {
+      if (exists(path)) {
+        return path;
+      }
+    }
+    return this.configPaths[0]!;
   }
 
   getRepoPath(repoRoot: string): string {
     return join(repoRoot, "configs", "clawdbot");
   }
 
-  isInstalled(platform: Platform): boolean {
-    return exists(this.getConfigPath(platform));
+  isInstalled(_platform: Platform): boolean {
+    return this.configPaths.some((path) => existsSync(path));
   }
 
   detect(): boolean {
@@ -72,7 +82,7 @@ export class ClawdbotAdapter implements AgentAdapter {
     };
   }
 
-  async export(repoPath: string, systemPath: string): Promise<ExportResult> {
+  async export(repoPath: string, _systemPath: string): Promise<ExportResult> {
     if (!exists(repoPath)) {
       return {
         success: false,
@@ -80,25 +90,34 @@ export class ClawdbotAdapter implements AgentAdapter {
       };
     }
 
-    // Remove existing (symlink or directory)
-    if (exists(systemPath)) {
-      if (isSymlink(systemPath)) {
-        unlinkSync(systemPath);
-      } else {
-        // Backup existing config
-        const backupPath = `${systemPath}.backup`;
-        if (exists(backupPath)) {
-          if (isSymlink(backupPath)) {
-            unlinkSync(backupPath);
-          } else {
-            removeDir(backupPath);
-          }
-        }
-        require("node:fs").renameSync(systemPath, backupPath);
-      }
+    const existingPaths = this.configPaths.filter((p) => existsSync(p));
+
+    if (existingPaths.length > 1) {
+      return {
+        success: false,
+        message:
+          "Multiple config paths exist (~/.clawd and ~/.clawdbot). Please manually delete one and retry.",
+      };
     }
 
-    // Create symlink
+    return this.performExport(
+      repoPath,
+      existingPaths[0] || this.configPaths[0]!,
+    );
+  }
+
+  private async performExport(
+    repoPath: string,
+    systemPath: string,
+  ): Promise<ExportResult> {
+    if (exists(systemPath) && !isSymlink(systemPath)) {
+      const backupPath = `${systemPath}.backup`;
+      if (exists(backupPath)) {
+        removeDir(backupPath);
+      }
+      require("node:fs").renameSync(systemPath, backupPath);
+    }
+
     createSymlink(repoPath, systemPath);
 
     return {
