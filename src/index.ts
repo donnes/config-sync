@@ -34,14 +34,10 @@ const commands = {
 async function main() {
   const args = process.argv.slice(2);
 
-  try {
-    await checkForUpdates({
-      currentVersion: VERSION,
-      packageName: packageJson.name,
-    });
-  } catch {
-    // Ignore update check errors
-  }
+  await checkForUpdates({
+    currentVersion: VERSION,
+    packageName: packageJson.name,
+  });
 
   // Handle --version flag
   if (args.includes("--version") || args.includes("-v")) {

@@ -1,13 +1,13 @@
 import { clearTimeout, setTimeout } from "node:timers";
 
-interface UpdateCheckOptions {
+export interface UpdateCheckOptions {
   currentVersion: string;
   packageName: string;
 }
 
 const UPDATE_TIMEOUT_MS = 2000;
 
-function isNpxInvocation(): boolean {
+export function isNpxInvocation() {
   const argv1 = process.argv[1] || "";
   const execPath = process.env.npm_execpath || "";
   const userAgent = process.env.npm_config_user_agent || "";
@@ -17,13 +17,13 @@ function isNpxInvocation(): boolean {
   return npxPathMatch || execMatch || agentMatch;
 }
 
-function parseVersion(version: string): [number, number, number] | null {
-  const match = version.trim().match(/^(\d+)\.(\d+)\.(\d+)/);
+export function parseVersion(version: string) {
+  const match = version.trim().match(/^(\d+)\.(\d+)\.(\d+)$/);
   if (!match) return null;
   return [Number(match[1]), Number(match[2]), Number(match[3])];
 }
 
-function isOutdated(current: string, latest: string): boolean {
+export function isOutdated(current: string, latest: string) {
   const currentParts = parseVersion(current);
   const latestParts = parseVersion(latest);
   if (!currentParts || !latestParts) return false;
@@ -37,11 +37,11 @@ function isOutdated(current: string, latest: string): boolean {
   return false;
 }
 
-function formatUpdateNotice(params: {
+export function formatUpdateNotice(params: {
   current: string;
   latest: string;
   packageName: string;
-}): string {
+}) {
   const updateCommand = `npm install -g ${params.packageName}@latest`;
   const lines = [
     "📦 A new version of Syncode is",
@@ -63,7 +63,7 @@ function formatUpdateNotice(params: {
   return `${top}\n${boxed}\n${bottom}`;
 }
 
-async function fetchLatestVersion(packageName: string): Promise<string | null> {
+async function fetchLatestVersion(packageName: string) {
   const url = `https://registry.npmjs.org/${encodeURIComponent(packageName)}/latest`;
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), UPDATE_TIMEOUT_MS);
@@ -83,7 +83,7 @@ async function fetchLatestVersion(packageName: string): Promise<string | null> {
 export async function checkForUpdates({
   currentVersion,
   packageName,
-}: UpdateCheckOptions): Promise<void> {
+}: UpdateCheckOptions) {
   if (isNpxInvocation()) return;
 
   const latest = await fetchLatestVersion(packageName);
