@@ -58,6 +58,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.3.11",
+		"@opencode-ai/sdk": "^1.1.41",
 		"@types/bun": "latest",
 		"@types/node": "^20.0.0",
 		"tsup": "^8.5.1",
