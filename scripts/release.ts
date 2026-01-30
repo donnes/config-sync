@@ -41,7 +41,7 @@ if (!preview) {
   try {
     const previous = await getLatestRelease();
     notes = await buildNotes(previous, "HEAD");
-  } catch (error) {
+  } catch (_error) {
     console.log("Could not generate changelog, using default notes");
     notes = ["No notable changes"];
   }

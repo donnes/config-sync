@@ -180,7 +180,7 @@ export async function buildNotes(from: string, to: string) {
     return [];
   }
 
-  console.log("generating changelog since " + from);
+  console.log(`generating changelog since ${from}`);
 
   const opencode = await createOpencode({ port: 5044 });
   const notes: string[] = [];
