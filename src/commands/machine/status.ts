@@ -3,14 +3,7 @@ import { join } from "node:path";
 import * as p from "@clack/prompts";
 import { getConfig } from "../../config/manager";
 import { contractHome, expandHome, getConfigsDir } from "../../utils/paths";
-import {
-  getPackageManager,
-  getPlatformName,
-  isArch,
-  isDebian,
-  isLinux,
-  isMacOS,
-} from "../../utils/platform";
+import { getPackageManager, getPlatformName } from "../../utils/platform";
 import { exec } from "../../utils/shell";
 
 export async function machineStatusCommand(options?: { skipIntro?: boolean }) {
@@ -72,18 +65,7 @@ export async function machineStatusCommand(options?: { skipIntro?: boolean }) {
 
     console.log("");
 
-    if (isMacOS) {
-      reportDependencyFile("Brewfile", repoPath, ["Brewfile"]);
-    } else if (isLinux && isArch()) {
-      reportDependencyFile("packages-arch.txt", repoPath, [
-        "packages-arch.txt",
-        "packages.txt",
-      ]);
-    } else if (isLinux && isDebian()) {
-      reportDependencyFile("packages-debian.txt", repoPath, [
-        "packages-debian.txt",
-      ]);
-    }
+    reportDependencyFile("install.sh", repoPath, ["install.sh"]);
 
     p.outro("Done");
   } catch (error) {

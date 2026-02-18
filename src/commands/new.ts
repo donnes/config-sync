@@ -13,11 +13,7 @@ import {
 } from "../agents";
 import { configExists, getConfig, initConfig } from "../config/manager";
 import { SUPPORTED_AGENTS } from "../config/types";
-import {
-  BREWFILE_TEMPLATE,
-  PACKAGES_ARCH_TEMPLATE,
-  PACKAGES_DEBIAN_TEMPLATE,
-} from "../templates";
+import { INSTALL_SH_TEMPLATE } from "../templates";
 import { contractHome, expandHome } from "../utils/paths";
 
 export async function newCommand() {
@@ -220,19 +216,9 @@ export async function newCommand() {
 
     const templateFiles = [
       {
-        label: "Brewfile",
-        target: join(repoPath, "Brewfile"),
-        content: BREWFILE_TEMPLATE,
-      },
-      {
-        label: "packages-arch.txt",
-        target: join(repoPath, "packages-arch.txt"),
-        content: PACKAGES_ARCH_TEMPLATE,
-      },
-      {
-        label: "packages-debian.txt",
-        target: join(repoPath, "packages-debian.txt"),
-        content: PACKAGES_DEBIAN_TEMPLATE,
+        label: "install.sh",
+        target: join(repoPath, "install.sh"),
+        content: INSTALL_SH_TEMPLATE,
       },
     ];
 

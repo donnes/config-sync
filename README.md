@@ -108,12 +108,12 @@ syncode machine deps
 ```
 
 Install opinionated development dependencies for your machine:
-- **macOS**: Homebrew packages from `Brewfile`
-- **Arch/Omarchy**: Pacman/yay packages from `packages-arch.txt`
-- **Debian/Ubuntu**: APT packages from `packages-debian.txt`
-- **Universal**: Bun runtime and latest Node.js via fnm
+- **Unified script**: `install.sh` with curl-based installs where possible
+- **Curl-installed**: bun, fnm, uv, atuin, zoxide, fzf, opencode
+- **Package manager fallback**: ripgrep, fd, eza, gh, lazygit, go, rbenv, biome, aws-cli, bob
+- **macOS only**: OrbStack, Raycast, opencode-desktop (via Homebrew casks)
 
-These are boilerplate files that get copied to your repo root during `syncode new`. Edit them to customize the packages for your workflow.
+This is a boilerplate file that gets copied to your repo root during `syncode new`. Edit it to customize the tools for your workflow.
 
 ### Machine Status
 
@@ -184,9 +184,7 @@ Global configuration is stored at `~/.syncode/config.json`:
 ~/.syncode/repo/
 ├── .git/
 ├── .gitignore
-├── Brewfile
-├── packages-arch.txt
-├── packages-debian.txt
+├── install.sh
 ├── README.md
 ├── .agents/            # Shared skills (symlinked)
 │   └── skills/
@@ -229,6 +227,9 @@ syncode sync
 
 # Push to remote (commits and pushes in one command)
 syncode push
+
+# Pull changes from remote
+syncode pull
 ```
 
 ## Commands
@@ -238,7 +239,8 @@ syncode push
 - `syncode sync` - Sync agent configs (import or export)
 - `syncode status` - Show status of synced agents
 - `syncode push` - Push config changes to git remote
-- `syncode machine deps` - Install machine dependencies (brew/apt packages, bun, node)
+- `syncode pull` - Pull config changes from git remote
+- `syncode machine deps` - Install machine dependencies (install.sh)
 - `syncode machine status` - Show full machine setup status
 - `syncode --version` - Show version
 - `syncode help` - Show help message

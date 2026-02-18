@@ -86,8 +86,7 @@ export function getRepoPaths() {
     ghostty: join(configsDir, "ghostty", "config"),
     ssh: join(configsDir, "ssh", "config"),
     neovim: join(configsDir, "nvim"),
-    brewfile: join(configsDir, "Brewfile"),
-    packages: join(configsDir, "packages.txt"),
+    installScript: join(getRepoRoot(), "install.sh"),
     cursor: join(configsDir, "cursor"),
     windsurf: join(configsDir, "windsurf"),
     vscode: join(configsDir, "vscode"),
@@ -104,8 +103,6 @@ export const repoPaths = {
   ghostty: join(CONFIGS_DIR, "ghostty", "config"),
   ssh: join(CONFIGS_DIR, "ssh", "config"),
   neovim: join(CONFIGS_DIR, "nvim"),
-  brewfile: join(CONFIGS_DIR, "Brewfile"),
-  packages: join(CONFIGS_DIR, "packages.txt"),
 };
 
 // Expand ~ to home directory
