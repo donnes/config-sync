@@ -72,6 +72,40 @@ export async function push(): Promise<{ success: boolean; message: string }> {
   return { success: false, message: result.stderr || "Push failed" };
 }
 
+export async function pull(): Promise<{ success: boolean; message: string }> {
+  const repoRoot = getRepoRoot();
+  const result = await exec(`git -C "${repoRoot}" pull --rebase`);
+  if (result.success) {
+    return { success: true, message: "Pulled from remote" };
+  }
+  return { success: false, message: result.stderr || "Pull failed" };
+}
+
+export async function fetch(): Promise<{ success: boolean; message: string }> {
+  const repoRoot = getRepoRoot();
+  const result = await exec(`git -C "${repoRoot}" fetch`);
+  if (result.success) {
+    return { success: true, message: "Fetched from remote" };
+  }
+  return { success: false, message: result.stderr || "Fetch failed" };
+}
+
+export async function getAheadCount(): Promise<number> {
+  const repoRoot = getRepoRoot();
+  const result = await exec(
+    `git -C "${repoRoot}" rev-list --count @{upstream}..HEAD 2>/dev/null || echo "0"`,
+  );
+  return Number.parseInt(result.stdout, 10) || 0;
+}
+
+export async function getBehindCount(): Promise<number> {
+  const repoRoot = getRepoRoot();
+  const result = await exec(
+    `git -C "${repoRoot}" rev-list --count HEAD..@{upstream} 2>/dev/null || echo "0"`,
+  );
+  return Number.parseInt(result.stdout, 10) || 0;
+}
+
 export async function getCurrentBranch(): Promise<string> {
   const repoRoot = getRepoRoot();
   const result = await exec(`git -C "${repoRoot}" branch --show-current`);

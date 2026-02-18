@@ -7,6 +7,7 @@ import * as p from "@clack/prompts";
 import { initCommand } from "./commands/init";
 import { machineCommand } from "./commands/machine";
 import { newCommand } from "./commands/new";
+import { pullCommand } from "./commands/pull";
 import { pushCommand } from "./commands/push";
 import { statusCommand } from "./commands/status";
 import { syncCommand } from "./commands/sync";
@@ -29,6 +30,7 @@ const commands = {
   unsync: unsyncCommand,
   status: statusCommand,
   push: pushCommand,
+  pull: pullCommand,
 };
 
 async function main() {
@@ -114,6 +116,11 @@ async function main() {
         label: "Push to remote",
         hint: "Push config changes to git remote",
       },
+      {
+        value: "pull",
+        label: "Pull from remote",
+        hint: "Pull config changes from git remote",
+      },
     ],
   });
 
@@ -146,6 +153,7 @@ Sync Commands:
   unsync        Remove symlinks and keep local configs
   status        Show status of synced agents
   push          Push config changes to git remote
+  pull          Pull config changes from git remote
 
 Machine Commands:
   machine       Machine setup tools (deps, status)
@@ -162,6 +170,7 @@ Examples:
   syncode sync         # Sync agent configs
   syncode unsync       # Remove symlinks
   syncode push         # Push changes to remote
+  syncode pull         # Pull changes from remote
   syncode machine      # Machine setup tools
 
 Quick Start:
